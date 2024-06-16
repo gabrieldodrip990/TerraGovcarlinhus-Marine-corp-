@@ -198,7 +198,7 @@
 
 		if(!isspaceturf(src))
 			M.inertia_dir = 0
-	..()
+	return ..()
 
 /turf/effect_smoke(obj/effect/particle_effect/smoke/S)
 	. = ..()
@@ -508,12 +508,8 @@
 /turf/open/floor/plating/ground/dirtgrassborder/is_weedable()
 	return FALSE
 
-/turf/open/liquid/water/is_weedable()
-	return FALSE
-
 /turf/open/ground/coast/is_weedable()
 	return FALSE
-
 
 /turf/open/floor/plating/ground/dirtgrassborder/autosmooth/buildable/is_weedable()
 	return TRUE
@@ -947,3 +943,17 @@ GLOBAL_LIST_INIT(blacklisted_automated_baseturfs, typecacheof(list(
 	if(SEND_SIGNAL(src, COMSIG_TURF_TELEPORT_CHECK))
 		return FALSE
 	return TRUE
+
+///Returns the number that represents how submerged an AM is by a turf and its contents
+/turf/proc/get_submerge_height(turf_only = FALSE)
+	. = 0
+	if(turf_only)
+		return
+	var/list/submerge_list = list()
+	SEND_SIGNAL(src, COMSIG_TURF_SUBMERGE_CHECK, submerge_list)
+	for(var/i in submerge_list)
+		. += i
+
+///Returns the number that shows how far an AM is offset when submerged in this turf
+/turf/proc/get_submerge_depth()
+	return 0
